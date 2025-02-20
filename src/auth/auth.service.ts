@@ -1,14 +1,14 @@
-import { Body, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { AuthDto } from "src/dto/auth.dto";
+import * as argon from 'argon2';
 
-@Injectable({
-
-})
+@Injectable()
 
 export class AuthService {
 
     login(dto : AuthDto) : AuthDto {
-        console.log(dto);
+        const hash = argon.hash(dto.password);
+        
         return dto;
     }
 

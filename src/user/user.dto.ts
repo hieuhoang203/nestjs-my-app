@@ -14,4 +14,8 @@ export class UserDto {
     @IsNotEmpty()
     email: string;
 
+    @IsString()
+    @IsNotEmpty()
+    password: string;
+
 }

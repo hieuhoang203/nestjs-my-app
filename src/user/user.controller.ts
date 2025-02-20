@@ -10,11 +10,6 @@ export class UserController {
 
     constructor(private readonly userServive:UserService) {}
 
-    @Post('save')
-    create(@Body() dto : UserDto) : Promise<User> {
-        return this.userServive.create(dto);
-    }
-
     @Get('')
     findAll() : Promise<User[]> {
         return this.userServive.findAll();

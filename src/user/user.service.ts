@@ -10,11 +10,6 @@ export class UserService {
 
     constructor(@InjectModel(User.name) private userModel:Model<UserDocument>) {}
 
-    async create(dto : Partial<UserDto>) : Promise<User> {
-        const newUser = new this.userModel(dto);
-        return await newUser.save();
-    } 
-
     async findAll() : Promise<User[]> {
         const users = this.userModel.find().exec();
         if(!users) {

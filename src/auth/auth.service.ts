@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AuthDto } from "src/dto/auth.dto";
+import { AuthDto } from "src/auth/auth.dto";
 import * as argon from 'argon2';
 
 @Injectable()

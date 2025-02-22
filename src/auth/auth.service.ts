@@ -5,14 +5,20 @@ import { InjectModel } from "@nestjs/mongoose";
 import { User, UserDocument } from "src/user/user.schema";
 import { Model } from "mongoose";
 import { UserDto } from "src/user/user.dto";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 
 export class AuthService {
 
-    constructor(@InjectModel(User.name) private userModel:Model<UserDocument>) {}
+    constructor(
+        @InjectModel(User.name) private userModel:Model<UserDocument>, 
+        private jwt : JwtService,
+        private config : ConfigService
+    ) {}
 
-    async login(dto : AuthDto) : Promise<User> {
+    async login(dto : AuthDto) : Promise<{value: User, accessToken: string}> {
         const user = await this.userModel.findOne({email: dto.email}).exec();
         if(!user) {
             throw new Error('User not found');
@@ -21,7 +27,10 @@ export class AuthService {
         if(!checkVerify) {
             throw new Error('Invalid password');
         }
-        return user;
+        return {
+            value: user,
+            accessToken: await this.signToken(user)
+        };
     }
 
 
@@ -38,6 +47,16 @@ export class AuthService {
             hash: hash
         });
         return await newUser.save();
+    }
+
+    async signToken(user:User) : Promise<string> {
+        return this.jwt.sign(
+            {user: user},
+            {
+                secret: this.config.get('JWT_SECRET'),
+                expiresIn: this.config.get('JWT_EXPIRES')
+            }
+        );
     }
 
 };

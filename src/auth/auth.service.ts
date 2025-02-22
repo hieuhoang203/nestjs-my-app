@@ -7,6 +7,7 @@ import { Model } from "mongoose";
 import { UserDto } from "src/user/user.dto";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { RedisService } from "src/redis/redis.service";
 
 @Injectable()
 
@@ -15,7 +16,8 @@ export class AuthService {
     constructor(
         @InjectModel(User.name) private userModel:Model<UserDocument>, 
         private jwt : JwtService,
-        private config : ConfigService
+        private config : ConfigService,
+        private readonly redisService : RedisService
     ) {}
 
     async login(dto : AuthDto) : Promise<{value: User, accessToken: string}> {
@@ -27,6 +29,7 @@ export class AuthService {
         if(!checkVerify) {
             throw new Error('Invalid password');
         }
+        await this.redisService.setCache(user.email, user, 120);
         return {
             value: user,
             accessToken: await this.signToken(user)

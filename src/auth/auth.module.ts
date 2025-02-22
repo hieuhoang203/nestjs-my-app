@@ -6,11 +6,13 @@ import { User, UserSchema } from "src/user/user.schema";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtStrategy } from "src/strategy";
+import { RedisModule } from "src/redis/redis.module";
 
 @Module({
     imports: [
         MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
-        JwtModule.register({})
+        JwtModule.register({}),
+        RedisModule
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy]

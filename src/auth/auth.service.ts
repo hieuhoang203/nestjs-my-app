@@ -39,8 +39,8 @@ export class AuthService {
 
     async signup(@Body() dto: UserDto) : Promise<User> {
         const hash = await argon.hash(dto.password);
-        const user = await this.userModel.find({email: dto.email}).exec();
-        if(!user) {
+        const user = await this.userModel.findOne({email: dto.email}).exec();
+        if(user) {
             throw new Error('User already exists');
         }
         const newUser = new this.userModel({

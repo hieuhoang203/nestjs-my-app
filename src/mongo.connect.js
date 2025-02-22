@@ -1,6 +1,6 @@
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://hieuhv203:<db_password>@nestjs-app.sco31.mongodb.net/?retryWrites=true&w=majority&appName=nestjs-app";
+const uri = "mongodb://devVnfite:Vnfite20250222@42.113.122.118:27017/CRM_vnfite_v2_test?authSource=CRM_vnfite_v2_test";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {

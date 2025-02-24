@@ -8,6 +8,8 @@ import { UserDto } from "src/user/user.dto";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { RedisService } from "src/redis/redis.service";
+import { AccessTokenService } from "src/accessToken/accessToken.service";
+import { RefreshTokenService } from "src/refreshToken/refreshToken.service";
 
 @Injectable()
 
@@ -17,10 +19,12 @@ export class AuthService {
         @InjectModel(User.name) private userModel:Model<UserDocument>, 
         private jwt : JwtService,
         private config : ConfigService,
-        private readonly redisService : RedisService
+        private readonly redisService : RedisService,
+        private readonly accessTokenService: AccessTokenService,
+        private readonly refreshTokenService: RefreshTokenService
     ) {}
 
-    async login(dto : AuthDto) : Promise<{value: User, accessToken: string}> {
+    async login(dto : AuthDto, rememberPass : boolean) : Promise<{value: User, accessToken: string, refreshToken?: string}> {
         const user = await this.userModel.findOne({email: dto.email}).exec();
         if(!user) {
             throw new Error('User not found');
@@ -29,11 +33,22 @@ export class AuthService {
         if(!checkVerify) {
             throw new Error('Invalid password');
         }
-        await this.redisService.setCache(user.email, user, 120);
-        return {
-            value: user,
-            accessToken: await this.signToken(user)
-        };
+        if (!rememberPass) {
+            const accessToken = await this.accessTokenService.createAccessToken(user.id);
+            const refreshToken = await this.refreshTokenService.createRefreshToken(user.id);
+            this.redisService.setCache(`accessToken: ${user?.id}`, accessToken, 30 * 60);
+            this.redisService.setCache(`refreshToken: ${user?.id}`, refreshToken, 7 * 24 * 30 * 60);
+            return {
+                value: user,
+                accessToken: accessToken.token,
+                refreshToken: refreshToken.token
+            };
+        } else {
+            return {
+                value: user,
+                accessToken: (await this.accessTokenService.createAccessToken(user.id)).token
+            };
+        }
     }
 
 

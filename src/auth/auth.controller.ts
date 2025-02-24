@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Param, Post } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "src/auth/auth.dto";
 import { UserDto } from "src/user/user.dto";
@@ -15,8 +15,8 @@ export class AuthController {
     }
 
     @Post('signin')
-    signin(@Body() dto : AuthDto) {
-        return this.authService.login(dto);
+    signin(@Body() dto : AuthDto, @Param('rememberPass') rememberPass : boolean) {
+        return this.authService.login(dto, rememberPass);
     }   
 
 };

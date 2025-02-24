@@ -4,6 +4,8 @@ import { UserModule } from './user/user.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { AccessTokenModule } from './accessToken/accessToken.module';
+import { RefreshTokenModule } from './refreshToken/refreshToken.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ConfigModule } from '@nestjs/config';
     // ),
     AuthModule,
     UserModule,
+    AccessTokenModule,
+    RefreshTokenModule,
     BookmarkModule,
     ConfigModule.forRoot({
       isGlobal: true,

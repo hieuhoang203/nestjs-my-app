@@ -7,6 +7,7 @@ import { AccessTokenController } from "./accessToken.controller";
 
 @Module({
     imports: [
+        AccessTokenModule,
         MongooseModule.forFeature([{ name: AccessToken.name, schema: AccessTokenSchema }]),
         RedisModule
     ],
